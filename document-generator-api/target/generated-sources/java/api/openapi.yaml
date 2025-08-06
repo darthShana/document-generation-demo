@@ -1,0 +1,303 @@
+openapi: 3.0.3
+info:
+  contact:
+    email: support@autosure.co.nz
+    name: Turners Autosure
+  description: |
+    API for generating PDF documents from templates.
+
+    This microservice provides endpoints for generating various types of insurance documents
+    in PDF format using predefined templates and data models.
+  license:
+    name: Proprietary
+  title: Document Generator API
+  version: 1.0.0
+servers:
+- description: Local development server
+  url: http://localhost:3000
+- description: Production server
+  url: https://document-generator.autosure.co.nz
+tags:
+- description: Health check operations
+  name: Health
+- description: PDF document generation operations
+  name: Document Generation
+paths:
+  /health:
+    get:
+      description: Returns the health status of the document generator service
+      operationId: healthCheck
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+          description: Service is healthy
+      summary: Health check endpoint
+      tags:
+      - Health
+      x-accepts: application/json
+  /generate/mbi-quote:
+    post:
+      description: |
+        Generates a Mechanical Breakdown Insurance (MBI) quote document in PDF format
+        using the provided quote data and the MBI quote template.
+      operationId: generateMbiQuote
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MbiQuoteRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/pdf:
+              schema:
+                format: binary
+                type: string
+          description: PDF document generated successfully
+          headers:
+            Content-Disposition:
+              description: Attachment filename for the generated PDF
+              explode: false
+              schema:
+                example: attachment; filename="mbi-quote-35038365.pdf"
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad request - invalid or missing data
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Internal server error - PDF generation failed
+      summary: Generate MBI Quote PDF
+      tags:
+      - Document Generation
+      x-content-type: application/json
+      x-accepts: application/json
+components:
+  schemas:
+    HealthResponse:
+      example:
+        status: healthy
+        timestamp: 2000-01-23T04:56:07.000+00:00
+      properties:
+        status:
+          description: The health status of the service
+          enum:
+          - healthy
+          type: string
+        timestamp:
+          description: ISO timestamp of the health check
+          format: date-time
+          type: string
+      required:
+      - status
+      - timestamp
+      type: object
+    MbiQuoteRequest:
+      example:
+        year: "2022"
+        repatriationCosts: Up to $500 per claim
+        gst: $130.43
+        ccRating: "2500"
+        exclusions: "No"
+        excessAmount: $150
+        cover: Assist Plus
+        roadsideAssistance: "Yes"
+        accommodationTravel: "Up to $1,500 per claim"
+        variant: Limited
+        vehicleValue: "$15,000"
+        vin: MM0DJ2HAA0W125727
+        model: Range Rover Evoque
+        consumableItems: Up to $750 per claim
+        make: Land Rover
+        modifications: "No"
+        modificationDetails: ""
+        quotationNumber: "35038365"
+        coverPeriod: 36 months
+        additionalCovers: "Accesses and comfort, Driver assistance and Safety, Entertainment\
+          \ and Performance"
+        odometer: "150000"
+        exclusionDetails: ""
+        totalPremium: $999.99
+        agentName: TEST PAUL KELLY (DO NOT TOUCH)
+        agentNumber: "4990"
+        quotationDate: 22/12/2025
+        fuelType: Hybrid
+        electricPackage: ""
+        registration: JBM896
+        maxClaim: OPEN LIMIT
+      properties:
+        quotationNumber:
+          description: Unique quotation number
+          example: "35038365"
+          type: string
+        quotationDate:
+          description: Date of the quotation
+          example: 22/12/2025
+          type: string
+        cover:
+          description: Type of cover
+          example: Assist Plus
+          type: string
+        coverPeriod:
+          description: Period of coverage
+          example: 36 months
+          type: string
+        maxClaim:
+          description: Maximum entitlement per claim
+          example: OPEN LIMIT
+          type: string
+        additionalCovers:
+          description: Additional covers included
+          example: "Accesses and comfort, Driver assistance and Safety, Entertainment\
+            \ and Performance"
+          type: string
+        consumableItems:
+          description: Consumable items coverage
+          example: Up to $750 per claim
+          type: string
+        repatriationCosts:
+          description: Repatriation costs coverage
+          example: Up to $500 per claim
+          type: string
+        accommodationTravel:
+          description: Accommodation and travel coverage
+          example: "Up to $1,500 per claim"
+          type: string
+        roadsideAssistance:
+          description: Roadside assistance availability
+          example: "Yes"
+          type: string
+        electricPackage:
+          description: Electric vehicle package details
+          example: ""
+          type: string
+        registration:
+          description: Vehicle registration number
+          example: JBM896
+          type: string
+        vin:
+          description: Vehicle Identification Number
+          example: MM0DJ2HAA0W125727
+          type: string
+        make:
+          description: Vehicle make
+          example: Land Rover
+          type: string
+        model:
+          description: Vehicle model
+          example: Range Rover Evoque
+          type: string
+        variant:
+          description: Vehicle variant
+          example: Limited
+          type: string
+        vehicleValue:
+          description: Vehicle value
+          example: "$15,000"
+          type: string
+        fuelType:
+          description: Vehicle fuel type
+          example: Hybrid
+          type: string
+        ccRating:
+          description: Engine CC rating
+          example: "2500"
+          type: string
+        year:
+          description: Year the vehicle was built
+          example: "2022"
+          type: string
+        odometer:
+          description: Vehicle odometer reading in kilometers
+          example: "150000"
+          type: string
+        modifications:
+          description: Whether the vehicle has modifications
+          example: "No"
+          type: string
+        modificationDetails:
+          description: Details of modifications if applicable
+          example: ""
+          type: string
+        exclusions:
+          description: Whether there are exclusions
+          example: "No"
+          type: string
+        exclusionDetails:
+          description: Details of exclusions if applicable
+          example: ""
+          type: string
+        excessAmount:
+          description: Excess amount per claim
+          example: $150
+          type: string
+        totalPremium:
+          description: Total quoted premium
+          example: $999.99
+          type: string
+        gst:
+          description: GST amount included
+          example: $130.43
+          type: string
+        agentName:
+          description: Name of the agent
+          example: TEST PAUL KELLY (DO NOT TOUCH)
+          type: string
+        agentNumber:
+          description: Agent number
+          example: "4990"
+          type: string
+      required:
+      - accommodationTravel
+      - additionalCovers
+      - agentName
+      - agentNumber
+      - ccRating
+      - consumableItems
+      - cover
+      - coverPeriod
+      - excessAmount
+      - exclusions
+      - fuelType
+      - gst
+      - make
+      - maxClaim
+      - model
+      - modifications
+      - odometer
+      - quotationDate
+      - quotationNumber
+      - registration
+      - repatriationCosts
+      - roadsideAssistance
+      - totalPremium
+      - variant
+      - vehicleValue
+      - vin
+      - year
+      type: object
+    ErrorResponse:
+      properties:
+        error:
+          description: Error message
+          type: string
+        missingFields:
+          description: List of missing required fields (for validation errors)
+          items:
+            type: string
+          type: array
+      required:
+      - error
+      type: object
+

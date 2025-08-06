@@ -1,0 +1,35 @@
+services:
+  document-generator:
+    build:
+      context: ..
+      dockerfile: document-generator/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      # Override/add Docker-specific settings
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+    
+    volumes:
+      # Mount AWS credentials file if using file-based auth
+      # - ~/.aws:/home/nodejs/.aws:ro
+      
+      # Mount templates directory for easy updates (optional)
+      - ./templates:/app/templates:ro
+    
+    restart: unless-stopped
+    
+    # Health check using curl instead of wget (more universally available)
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Optional: Add a network for multiple services
+networks:
+  default:
+    name: document-generator-network

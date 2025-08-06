@@ -1,0 +1,366 @@
+<div class="mbi-form-container">
+  <div class="header">
+    <h1>MBI Quote Generator</h1>
+    <p>Fill in the details below to generate your Mechanical Breakdown Insurance quote PDF</p>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <form [formGroup]="mbiForm" (ngSubmit)="onSubmit()" class="mbi-form">
+    
+    <!-- Quotation Details Section -->
+    <div class="form-section">
+      <h2>1. Quotation Details</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="quotationNumber">Quotation Number *</label>
+          <input 
+            id="quotationNumber" 
+            type="text" 
+            formControlName="quotationNumber"
+            [class.invalid]="isFieldInvalid('quotationNumber')"
+            placeholder="Enter quotation number">
+          <div class="error-text" *ngIf="isFieldInvalid('quotationNumber')">
+            Quotation number is required
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="quotationDate">Quotation Date *</label>
+          <input 
+            id="quotationDate" 
+            type="date" 
+            formControlName="quotationDate"
+            [class.invalid]="isFieldInvalid('quotationDate')">
+          <div class="error-text" *ngIf="isFieldInvalid('quotationDate')">
+            Quotation date is required
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Policy Details Section -->
+    <div class="form-section">
+      <h2>2. Policy Details</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="cover">Cover *</label>
+          <select id="cover" formControlName="cover" [class.invalid]="isFieldInvalid('cover')">
+            <option value="Assist Plus">Assist Plus</option>
+            <option value="Comprehensive Plus">Comprehensive Plus</option>
+            <option value="Basic Cover">Basic Cover</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="coverPeriod">Cover Period *</label>
+          <select id="coverPeriod" formControlName="coverPeriod" [class.invalid]="isFieldInvalid('coverPeriod')">
+            <option value="12 months">12 months</option>
+            <option value="24 months">24 months</option>
+            <option value="36 months">36 months</option>
+            <option value="48 months">48 months</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="maxClaim">Max Claim per Incident *</label>
+          <input 
+            id="maxClaim" 
+            type="text" 
+            formControlName="maxClaim"
+            [class.invalid]="isFieldInvalid('maxClaim')"
+            placeholder="e.g., OPEN LIMIT, $10,000">
+        </div>
+        <div class="form-group">
+          <label for="excessAmount">Excess Amount *</label>
+          <input 
+            id="excessAmount" 
+            type="text" 
+            formControlName="excessAmount"
+            [class.invalid]="isFieldInvalid('excessAmount')"
+            placeholder="e.g., $150">
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="additionalCovers">Additional Covers</label>
+        <textarea 
+          id="additionalCovers" 
+          formControlName="additionalCovers"
+          rows="2"
+          placeholder="List additional covers included"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="consumableItems">Consumable Items</label>
+          <input 
+            id="consumableItems" 
+            type="text" 
+            formControlName="consumableItems"
+            placeholder="e.g., Up to $750 per claim">
+        </div>
+        <div class="form-group">
+          <label for="repatriationCosts">Repatriation Costs</label>
+          <input 
+            id="repatriationCosts" 
+            type="text" 
+            formControlName="repatriationCosts"
+            placeholder="e.g., Up to $500 per claim">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="accommodationTravel">Accommodation & Travel</label>
+          <input 
+            id="accommodationTravel" 
+            type="text" 
+            formControlName="accommodationTravel"
+            placeholder="e.g., Up to $1,500 per claim">
+        </div>
+        <div class="form-group">
+          <label for="roadsideAssistance">Roadside Assistance</label>
+          <select id="roadsideAssistance" formControlName="roadsideAssistance">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="electricPackage">Electric Vehicle Package</label>
+        <input 
+          id="electricPackage" 
+          type="text" 
+          formControlName="electricPackage"
+          placeholder="Details for electric vehicle coverage (if applicable)">
+      </div>
+    </div>
+
+    <!-- Vehicle Details Section -->
+    <div class="form-section">
+      <h2>3. Vehicle Details</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="registration">Registration *</label>
+          <input 
+            id="registration" 
+            type="text" 
+            formControlName="registration"
+            [class.invalid]="isFieldInvalid('registration')"
+            placeholder="e.g., ABC123">
+        </div>
+        <div class="form-group">
+          <label for="vin">VIN *</label>
+          <input 
+            id="vin" 
+            type="text" 
+            formControlName="vin"
+            [class.invalid]="isFieldInvalid('vin')"
+            placeholder="Vehicle Identification Number">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="make">Make *</label>
+          <input 
+            id="make" 
+            type="text" 
+            formControlName="make"
+            [class.invalid]="isFieldInvalid('make')"
+            placeholder="e.g., Toyota">
+        </div>
+        <div class="form-group">
+          <label for="model">Model *</label>
+          <input 
+            id="model" 
+            type="text" 
+            formControlName="model"
+            [class.invalid]="isFieldInvalid('model')"
+            placeholder="e.g., Camry">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="variant">Variant</label>
+          <input 
+            id="variant" 
+            type="text" 
+            formControlName="variant"
+            placeholder="e.g., ZR, Limited">
+        </div>
+        <div class="form-group">
+          <label for="year">Year *</label>
+          <input 
+            id="year" 
+            type="number" 
+            formControlName="year"
+            [class.invalid]="isFieldInvalid('year')"
+            placeholder="e.g., 2023"
+            min="1990"
+            max="2030">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="vehicleValue">Vehicle Value *</label>
+          <input 
+            id="vehicleValue" 
+            type="text" 
+            formControlName="vehicleValue"
+            [class.invalid]="isFieldInvalid('vehicleValue')"
+            placeholder="e.g., $25,000">
+        </div>
+        <div class="form-group">
+          <label for="fuelType">Fuel Type *</label>
+          <select id="fuelType" formControlName="fuelType" [class.invalid]="isFieldInvalid('fuelType')">
+            <option value="">Select fuel type</option>
+            <option value="Petrol">Petrol</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="Electric">Electric</option>
+            <option value="LPG">LPG</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="ccRating">CC Rating</label>
+          <input 
+            id="ccRating" 
+            type="text" 
+            formControlName="ccRating"
+            placeholder="e.g., 2500">
+        </div>
+        <div class="form-group">
+          <label for="odometer">Odometer (km) *</label>
+          <input 
+            id="odometer" 
+            type="number" 
+            formControlName="odometer"
+            [class.invalid]="isFieldInvalid('odometer')"
+            placeholder="e.g., 50000">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="modifications">Modifications</label>
+          <select id="modifications" formControlName="modifications">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="exclusions">Exclusions</label>
+          <select id="exclusions" formControlName="exclusions">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group full-width" *ngIf="mbiForm.get('modifications')?.value === 'Yes'">
+        <label for="modificationDetails">Modification Details</label>
+        <textarea 
+          id="modificationDetails" 
+          formControlName="modificationDetails"
+          rows="2"
+          placeholder="Describe modifications"></textarea>
+      </div>
+
+      <div class="form-group full-width" *ngIf="mbiForm.get('exclusions')?.value === 'Yes'">
+        <label for="exclusionDetails">Exclusion Details</label>
+        <textarea 
+          id="exclusionDetails" 
+          formControlName="exclusionDetails"
+          rows="2"
+          placeholder="Describe exclusions"></textarea>
+      </div>
+    </div>
+
+    <!-- Pricing Section -->
+    <div class="form-section">
+      <h2>4. Pricing</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="totalPremium">Total Premium *</label>
+          <input 
+            id="totalPremium" 
+            type="text" 
+            formControlName="totalPremium"
+            [class.invalid]="isFieldInvalid('totalPremium')"
+            placeholder="e.g., $999.99">
+        </div>
+        <div class="form-group">
+          <label for="gst">GST *</label>
+          <input 
+            id="gst" 
+            type="text" 
+            formControlName="gst"
+            [class.invalid]="isFieldInvalid('gst')"
+            placeholder="e.g., $130.43">
+        </div>
+      </div>
+    </div>
+
+    <!-- Agent Details Section -->
+    <div class="form-section">
+      <h2>5. Agent Details</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="agentName">Agent Name *</label>
+          <input 
+            id="agentName" 
+            type="text" 
+            formControlName="agentName"
+            [class.invalid]="isFieldInvalid('agentName')"
+            placeholder="Agent's full name">
+        </div>
+        <div class="form-group">
+          <label for="agentNumber">Agent Number *</label>
+          <input 
+            id="agentNumber" 
+            type="text" 
+            formControlName="agentNumber"
+            [class.invalid]="isFieldInvalid('agentNumber')"
+            placeholder="Agent identification number">
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button 
+        type="button" 
+        class="btn btn-secondary" 
+        (click)="resetForm()"
+        [disabled]="isGenerating">
+        Reset Form
+      </button>
+      
+      <button 
+        type="button" 
+        class="btn btn-outline" 
+        (click)="generateSamplePDF()"
+        [disabled]="isGenerating">
+        Generate Sample PDF
+      </button>
+      
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="isGenerating">
+        <span *ngIf="isGenerating">Generating...</span>
+        <span *ngIf="!isGenerating">Generate Quote PDF</span>
+      </button>
+    </div>
+  </form>
+</div>

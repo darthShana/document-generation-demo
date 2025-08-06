@@ -1,0 +1,279 @@
+openapi: 3.0.3
+info:
+  title: Document Generator API
+  description: |
+    API for generating PDF documents from templates.
+    
+    This microservice provides endpoints for generating various types of insurance documents
+    in PDF format using predefined templates and data models.
+  version: 1.0.0
+  contact:
+    name: Turners Autosure
+    email: support@autosure.co.nz
+  license:
+    name: Proprietary
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: https://document-generator.autosure.co.nz
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the document generator service
+      operationId: healthCheck
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /generate/mbi-quote:
+    post:
+      summary: Generate MBI Quote PDF
+      description: |
+        Generates a Mechanical Breakdown Insurance (MBI) quote document in PDF format
+        using the provided quote data and the MBI quote template.
+      operationId: generateMbiQuote
+      tags:
+        - Document Generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MbiQuoteRequest'
+      responses:
+        '200':
+          description: PDF document generated successfully
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Disposition:
+              description: Attachment filename for the generated PDF
+              schema:
+                type: string
+                example: 'attachment; filename="mbi-quote-35038365.pdf"'
+        '400':
+          description: Bad request - invalid or missing data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error - PDF generation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum: [healthy]
+          description: The health status of the service
+        timestamp:
+          type: string
+          format: date-time
+          description: ISO timestamp of the health check
+
+    MbiQuoteRequest:
+      type: object
+      required:
+        - quotationNumber
+        - quotationDate
+        - cover
+        - coverPeriod
+        - maxClaim
+        - additionalCovers
+        - consumableItems
+        - repatriationCosts
+        - accommodationTravel
+        - roadsideAssistance
+        - registration
+        - vin
+        - make
+        - model
+        - variant
+        - vehicleValue
+        - fuelType
+        - ccRating
+        - year
+        - odometer
+        - modifications
+        - exclusions
+        - excessAmount
+        - totalPremium
+        - gst
+        - agentName
+        - agentNumber
+      properties:
+        # Quotation Details
+        quotationNumber:
+          type: string
+          description: Unique quotation number
+          example: "35038365"
+        quotationDate:
+          type: string
+          description: Date of the quotation
+          example: "22/12/2025"
+          
+        # Policy Details
+        cover:
+          type: string
+          description: Type of cover
+          example: "Assist Plus"
+        coverPeriod:
+          type: string
+          description: Period of coverage
+          example: "36 months"
+        maxClaim:
+          type: string
+          description: Maximum entitlement per claim
+          example: "OPEN LIMIT"
+        additionalCovers:
+          type: string
+          description: Additional covers included
+          example: "Accesses and comfort, Driver assistance and Safety, Entertainment and Performance"
+          
+        # Additional Benefits
+        consumableItems:
+          type: string
+          description: Consumable items coverage
+          example: "Up to $750 per claim"
+        repatriationCosts:
+          type: string
+          description: Repatriation costs coverage
+          example: "Up to $500 per claim"
+        accommodationTravel:
+          type: string
+          description: Accommodation and travel coverage
+          example: "Up to $1,500 per claim"
+        roadsideAssistance:
+          type: string
+          description: Roadside assistance availability
+          example: "Yes"
+        electricPackage:
+          type: string
+          description: Electric vehicle package details
+          example: ""
+          
+        # Vehicle Details
+        registration:
+          type: string
+          description: Vehicle registration number
+          example: "JBM896"
+        vin:
+          type: string
+          description: Vehicle Identification Number
+          example: "MM0DJ2HAA0W125727"
+        make:
+          type: string
+          description: Vehicle make
+          example: "Land Rover"
+        model:
+          type: string
+          description: Vehicle model
+          example: "Range Rover Evoque"
+        variant:
+          type: string
+          description: Vehicle variant
+          example: "Limited"
+        vehicleValue:
+          type: string
+          description: Vehicle value
+          example: "$15,000"
+        fuelType:
+          type: string
+          description: Vehicle fuel type
+          example: "Hybrid"
+        ccRating:
+          type: string
+          description: Engine CC rating
+          example: "2500"
+        year:
+          type: string
+          description: Year the vehicle was built
+          example: "2022"
+        odometer:
+          type: string
+          description: Vehicle odometer reading in kilometers
+          example: "150000"
+          
+        # Modifications and Exclusions
+        modifications:
+          type: string
+          description: Whether the vehicle has modifications
+          example: "No"
+        modificationDetails:
+          type: string
+          description: Details of modifications if applicable
+          example: ""
+        exclusions:
+          type: string
+          description: Whether there are exclusions
+          example: "No"
+        exclusionDetails:
+          type: string
+          description: Details of exclusions if applicable
+          example: ""
+          
+        # Financial Details
+        excessAmount:
+          type: string
+          description: Excess amount per claim
+          example: "$150"
+        totalPremium:
+          type: string
+          description: Total quoted premium
+          example: "$999.99"
+        gst:
+          type: string
+          description: GST amount included
+          example: "$130.43"
+          
+        # Agent Information
+        agentName:
+          type: string
+          description: Name of the agent
+          example: "TEST PAUL KELLY (DO NOT TOUCH)"
+        agentNumber:
+          type: string
+          description: Agent number
+          example: "4990"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+        missingFields:
+          type: array
+          items:
+            type: string
+          description: List of missing required fields (for validation errors)
+
+tags:
+  - name: Health
+    description: Health check operations
+  - name: Document Generation
+    description: PDF document generation operations
